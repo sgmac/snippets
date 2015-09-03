@@ -1,0 +1,7 @@
+[params]
+host = "localhost"
+port = 8080
+enabled = true
+
+[runner]
+commands = ["uptime", "who"]
