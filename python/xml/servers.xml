@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<datacenter>
+	<server tag="done">
+		<id>101</id>
+		<memory>32G</memory>
+		<compute>Intel Xeon</compute>
+		<network>1G</network>
+	</server>
+	<server tag="pending">
+		<id>102</id>
+		<memory>128G</memory>
+		<compute>2 Intel Xeon</compute>
+		<network>10G</network>
+	</server>
+</datacenter>
