@@ -26,6 +26,7 @@ func listContries() (Response, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer r.Body.Close()
 
 	err = json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
