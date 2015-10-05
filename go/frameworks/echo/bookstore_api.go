@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -31,12 +30,8 @@ func index(c *echo.Context) error {
 	if len(BookStore) == 0 {
 		return nil
 	}
-	// Print books and link to add book
 	for _, b := range BookStore {
-		err := json.NewEncoder(c.Response().Writer()).Encode(b)
-		if err != nil {
-			return err
-		}
+		c.JSON(201, b)
 	}
 	return nil
 }
@@ -46,16 +41,8 @@ func addBook(c *echo.Context) error {
 	var b Book
 	b.Author = a
 
-	body := c.Request().Body
-	defer body.Close()
-
-	err := json.NewDecoder(body).Decode(&b)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	// TODO: Add if findBookByISBN does not return a book.
-	// Title may be the same.
+	c.Bind(&b)
+	c.JSON(201, b)
 	BookStore = append(BookStore, b)
 	fmt.Println("Added ", b.Title)
 	return nil
