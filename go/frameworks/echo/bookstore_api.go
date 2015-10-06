@@ -70,7 +70,25 @@ func saveBook(b Book) {
 	fmt.Println(string(marshaled))
 }
 
+func findBookByISBN(isbn string) (Book, error) {
+	for _, b := range BookStore {
+		if b.ISBN == isbn {
+			return b, nil
+		}
+	}
+	return Book{}, nil
+}
+
 func index(c *echo.Context) error {
+	isbn := c.Param("id")
+	if isbn != "" {
+		b, err := findBookByISBN(isbn)
+		if err != nil {
+			log.Fatal(err)
+		}
+		c.JSON(201, b)
+		return nil
+	}
 	if len(BookStore) == 0 {
 		return nil
 	}
@@ -117,6 +135,7 @@ func main() {
 
 	// Handlers
 	e.Get("/book", index)
+	e.Get("/book/:isbn", index)
 	e.Post("/book", addBook)
 
 	fmt.Println("Listening on port :5000 ")
