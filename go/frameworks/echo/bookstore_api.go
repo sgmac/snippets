@@ -1,10 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -14,6 +18,8 @@ var (
 	BookStore      []Book   = make([]Book, 0)
 	Authors        []Author = make([]Author, 0)
 	ErrAuthorEmpty          = errors.New("Author can not be empty")
+	path                    = filepath.Join("/tmp", "bookstore")
+	filename                = "list"
 )
 
 type Author struct {
@@ -33,13 +39,42 @@ type Message struct {
 	Error string
 }
 
+func saveBook(b Book) {
+	BookStore = append(BookStore, b)
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err = os.Mkdir(path, 0755)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	file := filepath.Join(path, filename)
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		_, err = os.Create(file)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	marshaled, err := json.MarshalIndent(BookStore, " ", " ")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile(file, marshaled, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(string(marshaled))
+}
+
 func index(c *echo.Context) error {
 	if len(BookStore) == 0 {
 		return nil
 	}
-	for _, b := range BookStore {
-		c.JSON(201, b)
-	}
+	c.JSON(201, BookStore)
 	return nil
 }
 
@@ -66,8 +101,8 @@ func addBook(c *echo.Context) error {
 		return err
 	}
 
-	BookStore = append(BookStore, b)
 	fmt.Println("Added ", b.Title)
+	saveBook(b)
 	return nil
 }
 
