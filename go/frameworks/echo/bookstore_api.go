@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -9,8 +11,9 @@ import (
 )
 
 var (
-	BookStore []Book   = make([]Book, 0)
-	Authors   []Author = make([]Author, 0)
+	BookStore      []Book   = make([]Book, 0)
+	Authors        []Author = make([]Author, 0)
+	ErrAuthorEmpty          = errors.New("Author can not be empty")
 )
 
 type Author struct {
@@ -21,9 +24,13 @@ type Author struct {
 
 type Book struct {
 	ISBN   string
-	Author Author
+	Author *Author
 	Title  string
 	Pages  int
+}
+
+type Message struct {
+	Error string
 }
 
 func index(c *echo.Context) error {
@@ -37,12 +44,28 @@ func index(c *echo.Context) error {
 }
 
 func addBook(c *echo.Context) error {
-	var a Author
 	var b Book
-	b.Author = a
+	b.Author = nil
 
-	c.Bind(&b)
-	c.JSON(201, b)
+	err := c.Bind(&b)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	if b.Author == nil {
+		var m Message
+		m.Error = "Author can not be empty."
+		c.JSON(203, m)
+		return ErrAuthorEmpty
+	}
+
+	err = c.JSON(201, b)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
 	BookStore = append(BookStore, b)
 	fmt.Println("Added ", b.Title)
 	return nil
