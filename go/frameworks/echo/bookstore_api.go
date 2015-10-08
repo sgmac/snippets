@@ -39,9 +39,22 @@ type Message struct {
 	Error string
 }
 
-func saveBook(b Book) {
-	BookStore = append(BookStore, b)
+func init() {
+	verifyPathFile()
+	file := filepath.Join(path, filename)
+	f, err := os.Open(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
 
+	err = json.NewDecoder(f).Decode(&BookStore)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func verifyPathFile() {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		err = os.Mkdir(path, 0755)
 		if err != nil {
@@ -51,11 +64,22 @@ func saveBook(b Book) {
 
 	file := filepath.Join(path, filename)
 	if _, err := os.Stat(file); os.IsNotExist(err) {
-		_, err = os.Create(file)
+		f, err := os.Create(file)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = json.NewEncoder(f).Encode(&BookStore)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+}
+
+func saveBook(b Book) {
+	BookStore = append(BookStore, b)
+	verifyPathFile()
+	file := filepath.Join(path, filename)
 
 	marshaled, err := json.MarshalIndent(BookStore, " ", " ")
 	if err != nil {
