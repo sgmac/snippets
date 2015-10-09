@@ -76,6 +76,19 @@ func verifyPathFile() {
 	}
 }
 
+func updateFile() {
+	file := filepath.Join(path, filename)
+	marshaled, err := json.MarshalIndent(BookStore, " ", " ")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile(file, marshaled, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func saveBook(b Book) {
 	BookStore = append(BookStore, b)
 	verifyPathFile()
@@ -148,6 +161,24 @@ func addBook(c *echo.Context) error {
 	return nil
 }
 
+func deleteBook(c *echo.Context) error {
+	var found Book
+	isbn := c.Param("isbn")
+	tmp := make([]Book, 0)
+
+	for _, b := range BookStore {
+		if b.ISBN == isbn {
+			found = b
+			continue
+		}
+		tmp = append(tmp, b)
+	}
+	BookStore = tmp
+	c.JSON(201, found)
+	updateFile()
+	return nil
+}
+
 func main() {
 	e := echo.New()
 	e.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -160,6 +191,7 @@ func main() {
 	// Handlers
 	e.Get("/book", index)
 	e.Get("/book/:isbn", index)
+	e.Delete("/book/:isbn", deleteBook)
 	e.Post("/book", addBook)
 
 	fmt.Println("Listening on port :5000 ")
