@@ -117,7 +117,7 @@ func findBookByISBN(isbn string) (Book, error) {
 }
 
 func index(c *echo.Context) error {
-	isbn := c.Param("id")
+	isbn := c.Param("isbn")
 	if isbn != "" {
 		b, err := findBookByISBN(isbn)
 		if err != nil {
@@ -179,6 +179,40 @@ func deleteBook(c *echo.Context) error {
 	return nil
 }
 
+func deleteBookFromCollection(book Book) {
+	tmp := make([]Book, 0)
+	for _, b := range BookStore {
+		if b.ISBN == book.ISBN {
+			fmt.Println("found book to remove")
+			continue
+		}
+		tmp = append(tmp, b)
+	}
+	BookStore = tmp
+}
+
+func updateBook(c *echo.Context) error {
+	var newBook Book
+	isbn := c.Param("isbn")
+	req := c.Request()
+	defer req.Body.Close()
+
+	err := json.NewDecoder(req.Body).Decode(&newBook)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	oldBook, err := findBookByISBN(isbn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	deleteBookFromCollection(oldBook)
+	updateFile()
+	saveBook(newBook)
+	return nil
+}
+
 func main() {
 	e := echo.New()
 	e.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -192,6 +226,7 @@ func main() {
 	e.Get("/book", index)
 	e.Get("/book/:isbn", index)
 	e.Delete("/book/:isbn", deleteBook)
+	e.Put("/book/:isbn", updateBook)
 	e.Post("/book", addBook)
 
 	fmt.Println("Listening on port :5000 ")
