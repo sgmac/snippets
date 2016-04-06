@@ -14,8 +14,8 @@ func exitOnError(err error) {
 	os.Exit(1)
 }
 
-func processFile(file string) error {
-
+func processFile(file string, numlines int) error {
+	var countLines int
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
 		exitOnError(err)
@@ -29,13 +29,21 @@ func processFile(file string) error {
 		exitOnError(err)
 	}
 
+loop:
 	for _, r := range records {
+		switch {
+		case countLines < numlines:
+			countLines += 1
+		case countLines == numlines:
+			break loop
+		}
 		fmt.Println(r)
 	}
 	return nil
 }
 func main() {
 	file := flag.String("f", "", "Process file")
+	numlines := flag.Int("n", -1, "Number of lines.")
 	flag.Parse()
 
 	if *file == "" {
@@ -43,5 +51,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	processFile(*file)
+	processFile(*file, *numlines)
 }
