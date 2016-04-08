@@ -12,7 +12,7 @@ func TestAddNumbers(t *testing.T) {
 
 func TestRestNumbers(t *testing.T) {
 	result := RestNumbers(1, 3)
-	t.Log("AddNumbers(1,3) should return -2")
+	t.Log("RestNumbers(1,3) should return -2")
 	if result != -2 {
 		t.Errorf("expected get -2, I got %v\n", result)
 	}
