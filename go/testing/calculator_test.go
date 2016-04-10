@@ -28,3 +28,11 @@ func TestDivNumbers(t *testing.T) {
 		t.Errorf("expected get 2, I got %v\n", result)
 	}
 }
+
+func TestDivNumbersByZero(t *testing.T) {
+	_, err := DivNumbers(4, 0)
+	if err != nil {
+		t.Errorf("%v\n", err)
+	}
+	t.Log("DivNumbers(4,0) should return error")
+}
