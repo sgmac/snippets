@@ -17,3 +17,14 @@ func TestRestNumbers(t *testing.T) {
 		t.Errorf("expected get -2, I got %v\n", result)
 	}
 }
+
+func TestDivNumbers(t *testing.T) {
+	result, err := DivNumbers(4, 2)
+	if err != nil {
+		t.Errorf("%v\n", err)
+	}
+	t.Log("DivNumbers(4,2) should return 2")
+	if result != 2 {
+		t.Errorf("expected get 2, I got %v\n", result)
+	}
+}
