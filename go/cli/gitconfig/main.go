@@ -23,9 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	re := regexp.MustCompile("url = (.*)")
-	match := re.FindStringSubmatch(gitconfig)
-	fmt.Println(match[1])
+	fmt.Println(gitconfig)
 }
 
 // find the gitconfig for a given repo and gets the url.
@@ -45,5 +43,7 @@ func walkGitConfig(repoPath string) (string, error) {
 		}
 		return "", err
 	}
-	return string(data), nil
+	re := regexp.MustCompile("url = (.*)")
+	match := re.FindStringSubmatch(string(data))
+	return match[1], nil
 }
