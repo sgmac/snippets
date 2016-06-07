@@ -10,8 +10,6 @@ import (
 
 var testDirectory = "/tmp/testing"
 
-// var testDirectory = "/tmp/dotfiles"
-
 var stubGitConfig = `
 [remote "origin"]
         url = git@gitlab.org:stubuser/testing.git
