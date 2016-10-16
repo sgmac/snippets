@@ -18,6 +18,7 @@ func main() {
 	flag.Parse()
 	if flag.NFlag() < 1 {
 		fmt.Fprintf(os.Stderr, "usage:%s -f <filename>\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "-n  Show number lines.\n")
 		os.Exit(1)
 	}
 
