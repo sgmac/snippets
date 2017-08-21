@@ -12,7 +12,8 @@ import (
 	"strings"
 )
 
-var ErrNotDirectoryFound = errors.New(".git not found, probably not the root repository.")
+// ErrNotDirectoryFound type when .git folder is not found
+var ErrNotDirectoryFound = errors.New(".git not found, probably not the root repository")
 
 func main() {
 	var path string
