@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// ErrDivisionByZero returns errror in case division by zero.
 var ErrDivisionByZero = errors.New("Division by zero.")
 
 // AddNumbers takes 2 numbers and returns the sum.
@@ -16,7 +17,7 @@ func AddNumbers(a, b int) int {
 	return a + b
 }
 
-// AddNumbers takes 2 numbers and returns the difference.
+// RestNumbers takes 2 numbers and returns the difference.
 func RestNumbers(a, b int) int {
 	return a - b
 }
