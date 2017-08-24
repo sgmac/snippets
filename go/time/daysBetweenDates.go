@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// CustomTime holds a date
 type CustomTime struct {
 	Year  int
 	Month int
