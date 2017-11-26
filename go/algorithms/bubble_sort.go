@@ -64,3 +64,24 @@ func BubbleSorted(list []int) {
 		}
 	}
 }
+
+func BubbleReverse(list []int) {
+	// Verify the list is unordered
+	var ordered int
+	for i, j := 0, 1; j < len(list); i, j = i+1, j+1 {
+		if list[i] < list[j] {
+			ordered++
+			continue
+		}
+	}
+	if ordered == len(list)-1 {
+		return
+	}
+	for k := 0; k < len(list); k++ {
+		for i, j := 0, 1; j < len(list)-i; i, j = i+1, j+1 {
+			if list[i] > list[j] {
+				list[i], list[j] = list[j], list[i]
+			}
+		}
+	}
+}
